@@ -1,6 +1,17 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import site from '$lib/assets/site.svg';
+	import { resolve } from '$app/paths';
 </script>
+
+<svelte:head>
+	<title>Site Sync</title>
+	<meta
+		name="description"
+		content="Our MVP app eliminates the hassle of spreadsheets and paper, 
+		enabling you to quickly generate and sync estimates across all your devices"
+	/>
+</svelte:head>
 
 <main class="wrapper overflow-x-hidden">
 	<div class="space-y-10 sm:flex sm:gap-7">
@@ -24,7 +35,10 @@
 		<button class="bg-primary text-text-inverse hover:bg-primary/75">
 			Login to Your Account
 		</button>
-		<button class="border border-primary text-primary hover:shadow hover:shadow-primary">
+		<button
+			onclick={() => goto(resolve('/estimate'))}
+			class="border border-primary text-primary hover:shadow hover:shadow-primary"
+		>
 			Create Your Estimate Locally
 		</button>
 	</div>
