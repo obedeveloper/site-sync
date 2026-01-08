@@ -5,7 +5,9 @@
 		quantity = $bindable(),
 		unit = $bindable(),
 		unitPrice = $bindable(),
-		remove
+		remove,
+		up,
+		down
 	}: {
 		index: number;
 		desc: string;
@@ -13,6 +15,8 @@
 		quantity: number;
 		unitPrice: number;
 		remove: () => void;
+		up?: () => void;
+		down?: () => void;
 	} = $props();
 
 	const amount = $derived((quantity * unitPrice).toLocaleString(undefined));
@@ -29,13 +33,20 @@
 		<input type="text" bind:value={() => unitPrice || '', (v) => (unitPrice = v || 0)} />
 	</td>
 	<td>{amount}</td>
-	<td class="border-text bg-red-700 text-text-inverse dark:text-text">
-		<button onclick={() => remove()}>Delete</button>
+	<td>
+		<button class="bg-red-500 dark:bg-red-900/75" onclick={() => remove()}>Delete</button>
+
+		{#if up}
+			<button class="bg-blue-500 dark:bg-blue-900/75" onclick={() => up()}>Move Up</button>
+		{/if}
+		{#if down}
+			<button class="bg-indigo-500 dark:bg-indigo-900/75" onclick={() => down()}>Move Down</button>
+		{/if}
 	</td>
 </tr>
 
 <style>
-	td:has(input, button) {
+	td:has(input) {
 		padding: 0;
 
 		input {
@@ -46,14 +57,22 @@
 				outline: none;
 			}
 		}
+	}
+
+	td:has(button) {
+		display: flex;
+		flex-wrap: wrap;
+		padding: 0;
+		gap: 0.75rem;
 
 		button {
 			cursor: pointer;
-			display: flex;
-			width: 100%;
-			height: 100%;
-			justify-content: center;
-			align-items: center;
+			flex-grow: 1;
+			padding: 0.5rem 1rem;
+
+			@media (prefers-color-scheme: light) {
+				color: var(--color-text-inverse);
+			}
 		}
 	}
 </style>

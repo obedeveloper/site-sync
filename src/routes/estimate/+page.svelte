@@ -43,7 +43,10 @@
 	<Header bind:title={metaData.title} bind:desc={metaData.desc}></Header>
 
 	<table class="my-6 table-auto md:table-fixed">
-		<TableHead></TableHead>
+		{#if items.length}
+			<TableHead></TableHead>
+		{/if}
+
 		<tbody>
 			{#each items as item, index (item.id)}
 				<SingleItem
@@ -53,6 +56,12 @@
 					bind:unit={item.unit}
 					bind:unitPrice={item.unitPrice}
 					remove={() => items.splice(index, 1)}
+					up={index
+						? () => ([items[index], items[index - 1]] = [items[index - 1], items[index]])
+						: undefined}
+					down={index < items.length - 1
+						? () => ([items[index], items[index + 1]] = [items[index + 1], items[index]])
+						: undefined}
 				></SingleItem>
 			{/each}
 		</tbody>
