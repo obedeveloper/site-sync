@@ -2,6 +2,7 @@
 	import Header from './Header.svelte';
 	import SingleItem from './SingleItem.svelte';
 	import TableHead from './TableHead.svelte';
+	import { onMount } from 'svelte';
 
 	interface Item {
 		id: number;
@@ -16,14 +17,26 @@
 		desc: string;
 	}
 
-	const metaData: MetaData = $state(
-		JSON.parse(localStorage.getItem('meta-data') ?? '{}') || {
-			title: '',
-			desc: ''
-		}
-	);
+	let metaData: MetaData = $state({
+		title: '',
+		desc: ''
+	});
 
-	const items: Item[] = $state(JSON.parse(localStorage.getItem('items') ?? '[]'));
+	let items: Item[] = $state([]);
+
+	onMount(() => {
+		const localMetaData = localStorage.getItem('meta-data');
+		const localItems = localStorage.getItem('items');
+
+		if (localMetaData) {
+			metaData = JSON.parse(localMetaData);
+		}
+
+		if (localItems) {
+			items = JSON.parse(localItems);
+		}
+	});
+
 	const total = $derived(
 		items.reduce((prev, curr) => prev + curr.quantity * curr.unitPrice, 0).toLocaleString(undefined)
 	);
