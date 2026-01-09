@@ -3,19 +3,7 @@
 	import SingleItem from './SingleItem.svelte';
 	import TableHead from './TableHead.svelte';
 	import { onMount } from 'svelte';
-
-	interface Item {
-		id: number;
-		desc: string;
-		unit: string;
-		quantity: number;
-		unitPrice: number;
-	}
-
-	interface MetaData {
-		title: string;
-		desc: string;
-	}
+	import type { MetaData, Item } from './types';
 
 	let metaData: MetaData = $state({
 		title: '',
@@ -83,7 +71,7 @@
 	<h2 class="text-3xl font-bold">TOTAL: {total}</h2>
 
 	<button
-		class="my-4 cursor-pointer bg-primary px-6 py-2 text-lg font-semibold text-text-inverse hover:bg-primary/75"
+		class="my-4 bg-primary px-6 py-2 text-lg font-semibold text-text-inverse hover:bg-primary/75"
 		onclick={() => items.push({ id: Date.now(), desc: '', quantity: 0, unit: '', unitPrice: 0 })}
 		>Add New Item</button
 	>

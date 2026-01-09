@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { logIn } from '$lib/auth-client';
 	import { resolve } from '$app/paths';
 	import Logo from './Logo.svelte';
 	import { navigating } from '$app/state';
 	import { fade } from 'svelte/transition';
+	import Menu from './Menu.svelte';
+
+	let menuIsOpen = $state(false);
 </script>
 
-<header class="sticky top-0 mb-2 space-y-1 bg-text-inverse pb-4">
+<header class="sticky top-0 mb-2 space-y-1 bg-text-inverse pb-4 sm:mb-5">
 	<div class="progress h-4">
 		{#if navigating.from}
 			<div transition:fade class="h-full bg-primary"></div>
@@ -17,22 +19,28 @@
 		<a href={resolve('/')}>
 			<Logo class="w-40 sm:w-48"></Logo>
 		</a>
-		<ul class="flex gap-4 *:hover:text-text/75 sm:text-lg">
-			<li>
-				<button onclick={logIn}>Log In</button>
-			</li>
-			<li>
-				<button>About</button>
-			</li>
-		</ul>
+		<div class="hidden sm:block">
+			<Menu></Menu>
+		</div>
+		{@render HamburgerMenu()}
 	</nav>
 </header>
 
-<style>
-	button {
-		cursor: pointer;
-	}
+<div class="wrapper sm:hidden">
+	{#if menuIsOpen}
+		<Menu mobile></Menu>
+	{/if}
+</div>
 
+{#snippet HamburgerMenu()}
+	<button class="space-y-1 sm:hidden" onclick={() => (menuIsOpen = !menuIsOpen)}>
+		{#each { length: 3 } as _}
+			<div class="h-1 w-8 bg-text"></div>
+		{/each}
+	</button>
+{/snippet}
+
+<style>
 	.progress div {
 		width: 0%;
 		margin-inline: auto;

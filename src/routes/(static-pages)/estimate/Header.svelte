@@ -31,6 +31,7 @@
 	p {
 		border: 1.5px solid var(--text-75);
 		padding: 0.2rem 0.4rem;
+		word-break: break-word;
 
 		&:focus {
 			outline: 0;

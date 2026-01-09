@@ -10,6 +10,10 @@ body {
 	font-family: 'Poppins', sans-serif;
 }
 
+button {
+	cursor: pointer;
+}
+
 @theme {
 	--color-text: light-dark(#080613, #f7f7f7);
 	--color-text-inverse: light-dark(#f7f7f7, #080613);
@@ -17,6 +21,6 @@ body {
 }
 
 .wrapper {
-	width: min(100% - 48px, 1.2e3rem / 16);
+	width: min(85%, 1.2e3rem / 16);
 	margin-inline: auto;
 }
