@@ -7,31 +7,31 @@
 	let { desc = $bindable(), title = $bindable() }: Props = $props();
 </script>
 
-<div class="space-y-3">
-	<div>
+<div class="space-y-3 *:flex *:flex-col *:gap-1">
+	<label>
 		<span>Title:</span>
-		<h1 class="text-4xl" contenteditable bind:innerText={title}></h1>
-	</div>
-	<div>
+		<input type="text" bind:value={title} />
+	</label>
+	<label>
 		<span>Description:</span>
-		<p contenteditable bind:innerText={desc}></p>
-	</div>
+		<input type="text" bind:value={desc} />
+	</label>
 </div>
 
 <style>
 	div {
-		--text-75: hsl(from var(--color-text) h s l / 75%);
+		--text-75: hsl(from var(--color-text) h s l / 50%);
 	}
 
-	span {
+	label {
 		color: var(--text-75);
 	}
 
-	h1,
-	p {
+	input {
 		border: 1.5px solid var(--text-75);
 		padding: 0.2rem 0.4rem;
 		word-break: break-word;
+		color: var(--color-text);
 
 		&:focus {
 			outline: 0;

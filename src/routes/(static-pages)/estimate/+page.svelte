@@ -1,16 +1,15 @@
 <script lang="ts">
 	import Header from './Header.svelte';
 	import SingleItem from './SingleItem.svelte';
-	import TableHead from './TableHead.svelte';
 	import { onMount } from 'svelte';
-	import type { MetaData, Item } from './types';
+	import type { MetaData } from './types';
+	import { items } from './estimate.svelte';
+	let footerHeight = $state(0);
 
 	let metaData: MetaData = $state({
 		title: '',
 		desc: ''
 	});
-
-	let items: Item[] = $state([]);
 
 	onMount(() => {
 		const localMetaData = localStorage.getItem('meta-data');
@@ -21,18 +20,27 @@
 		}
 
 		if (localItems) {
-			items = JSON.parse(localItems);
+			items.values = JSON.parse(localItems);
 		}
 	});
 
-	const total = $derived(
-		items.reduce((prev, curr) => prev + curr.quantity * curr.unitPrice, 0).toLocaleString(undefined)
-	);
+	const total = $derived(items.total);
 
 	$effect(() => {
 		localStorage.setItem('meta-data', JSON.stringify(metaData));
-		localStorage.setItem('items', JSON.stringify(items));
+		localStorage.setItem('items', JSON.stringify(items.values));
 	});
+
+	function addNewItem() {
+		items.values.push({ id: Date.now(), desc: '', quantity: 0, unit: '', unitPrice: 0 });
+	}
+
+	function clearEstimate() {
+		if (confirm('Are you sure you want to clear the estimate? This action cannot be undone.')) {
+			items.clear();
+			metaData = { title: '', desc: '' };
+		}
+	}
 </script>
 
 <svelte:head>
@@ -40,39 +48,79 @@
 	<meta name="description" content={metaData.desc} />
 </svelte:head>
 
-<main class="wrapper mb-6" spellcheck="false">
+<svelte:window
+	onkeydown={(event) => {
+		if (event.shiftKey && event.key.toLowerCase() === 'n') {
+			event.preventDefault();
+			addNewItem();
+		} else if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'd') {
+			event.preventDefault();
+			clearEstimate();
+		}
+	}}
+/>
+
+<main style:--footer-height={footerHeight + 'px'} class="wrapper" spellcheck="false">
+	{#if metaData.title || metaData.desc || items.values.length}
+		<button
+			class="mb-4 w-full bg-red-500 px-6 py-2 text-text-inverse hover:bg-red-500/75 sm:w-fit"
+			onclick={clearEstimate}>Clear Estimate {@render KBD('Ctrl/Cmd + D')}</button
+		>
+	{/if}
+
 	<Header bind:title={metaData.title} bind:desc={metaData.desc}></Header>
 
-	<table class="my-6 table-auto md:table-fixed">
-		{#if items.length}
-			<TableHead></TableHead>
-		{/if}
-
-		<tbody>
-			{#each items as item, index (item.id)}
-				<SingleItem
-					index={index + 1}
-					bind:desc={item.desc}
-					bind:quantity={item.quantity}
-					bind:unit={item.unit}
-					bind:unitPrice={item.unitPrice}
-					remove={() => items.splice(index, 1)}
-					up={index
-						? () => ([items[index], items[index - 1]] = [items[index - 1], items[index]])
-						: undefined}
-					down={index < items.length - 1
-						? () => ([items[index], items[index + 1]] = [items[index + 1], items[index]])
-						: undefined}
-				></SingleItem>
-			{/each}
-		</tbody>
-	</table>
-
-	<h2 class="text-3xl font-bold">TOTAL: {total}</h2>
+	<div class="items my-6">
+		{#each items.values as { id }, index (id)}
+			<SingleItem {index}></SingleItem>
+		{/each}
+	</div>
 
 	<button
-		class="my-4 bg-primary px-6 py-2 text-lg font-semibold text-text-inverse hover:bg-primary/75"
-		onclick={() => items.push({ id: Date.now(), desc: '', quantity: 0, unit: '', unitPrice: 0 })}
-		>Add New Item</button
+		class="my-4 w-full bg-primary px-6 py-2 text-lg font-semibold text-text-inverse hover:bg-primary/75 sm:w-fit"
+		onclick={addNewItem}
 	>
+		Add New Item {@render KBD('Shift + N')}
+	</button>
 </main>
+
+<h2
+	bind:clientHeight={footerHeight}
+	class="fixed bottom-0 w-full bg-text-inverse text-3xl font-bold"
+>
+	<span class="wrapper block py-5" class:error={isNaN(total)}>
+		{#if isNaN(total)}
+			Error!
+		{:else}
+			TOTAL: {total.toLocaleString()}
+		{/if}
+	</span>
+</h2>
+
+{#snippet KBD(text: string)}
+	<kbd class="ml-2 rounded bg-gray-200 px-2 py-1 font-mono text-sm text-gray-800">{text}</kbd>
+{/snippet}
+
+<style>
+	main {
+		margin-bottom: calc(var(--footer-height) + 1.5rem);
+	}
+
+	.error {
+		color: var(--color-red-500);
+	}
+
+	.items {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: 1rem;
+	}
+
+	kbd {
+		display: none;
+
+		@media (hover: hover) {
+			display: inline;
+		}
+	}
+</style>

@@ -2,7 +2,6 @@
 	import '@fontsource/poppins';
 	import './layout.css';
 	import Nav from './Nav.svelte';
-	import Footer from './Footer.svelte';
 
 	let { children } = $props();
 </script>
@@ -17,5 +16,3 @@
 <Nav></Nav>
 
 {@render children()}
-
-<Footer></Footer>

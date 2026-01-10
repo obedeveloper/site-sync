@@ -3,6 +3,7 @@
 	import site from '$lib/assets/site.svg';
 	import { resolve } from '$app/paths';
 	import { logIn } from '$lib/auth-client';
+	import Footer from '../Footer.svelte';
 </script>
 
 <svelte:head>
@@ -39,6 +40,8 @@
 		</button>
 	</div>
 </main>
+
+<Footer></Footer>
 
 <style>
 	button {

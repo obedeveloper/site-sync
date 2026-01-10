@@ -8,7 +8,7 @@
 	let menuIsOpen = $state(false);
 </script>
 
-<header class="sticky top-0 mb-2 space-y-1 bg-text-inverse pb-4 sm:mb-5">
+<header class="sticky top-0 z-10 mb-2 space-y-1 bg-text-inverse pb-4 sm:mb-5">
 	<div class="progress h-4">
 		{#if navigating.from}
 			<div transition:fade class="h-full bg-primary"></div>
